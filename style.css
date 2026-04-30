@@ -1,0 +1,408 @@
+/* ============================================================
+   Laboratorio Yahtzee - Método de Montecarlo
+   Styles
+   ============================================================ */
+
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    --primary:    #2563eb;
+    --primary-dk: #1e40af;
+    --secondary:  #475569;
+    --success:    #16a34a;
+    --danger:     #dc2626;
+    --warning:    #d97706;
+    --info:       #0891b2;
+    --bg:         #f1f5f9;
+    --surface:    #ffffff;
+    --border:     #cbd5e1;
+    --text:       #1e293b;
+    --text-muted: #64748b;
+    --highlight:  #fef9c3;
+    --locked-bg:  #dbeafe;
+    --locked-border: #3b82f6;
+    --active-border: #22c55e;
+    --radius:     0.5rem;
+    --shadow:     0 2px 8px rgba(0,0,0,.12);
+}
+
+body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+}
+
+/* ── Header ────────────────────────────────────────────────── */
+header {
+    background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 60%, #2563eb 100%);
+    color: #fff;
+    text-align: center;
+    padding: 2rem 1rem 1.5rem;
+}
+header h1 { font-size: 2.2rem; }
+header h2 { font-size: 1rem; font-weight: 400; opacity: .85; margin-top: .25rem; }
+
+/* ── Main layout ────────────────────────────────────────────── */
+main {
+    max-width: 1100px;
+    margin: 1.5rem auto;
+    padding: 0 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* ── Cards / sections ────────────────────────────────────────── */
+section {
+    background: var(--surface);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 1.5rem;
+}
+
+section h3 {
+    font-size: 1.15rem;
+    color: var(--primary);
+    margin-bottom: 1rem;
+    border-bottom: 2px solid var(--border);
+    padding-bottom: .5rem;
+}
+
+/* ── Game status ─────────────────────────────────────────────── */
+.game-status {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 1rem;
+}
+
+.status-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: .75rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: .25rem;
+    min-width: 150px;
+}
+.status-card .label { font-size: .8rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: .04em; }
+.status-card .value { font-size: 1.25rem; font-weight: 700; color: var(--primary); }
+
+/* ── Dice ────────────────────────────────────────────────────── */
+.dice-section { text-align: center; }
+
+.dice-container {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin: 1rem 0;
+}
+
+.die {
+    width: 90px;
+    height: 90px;
+    background: var(--surface);
+    border: 3px solid var(--border);
+    border-radius: 14px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform .15s, border-color .15s, background .15s;
+    position: relative;
+    box-shadow: 0 4px 10px rgba(0,0,0,.12);
+    user-select: none;
+}
+.die:hover { transform: translateY(-4px); border-color: var(--primary); }
+.die.locked {
+    background: var(--locked-bg);
+    border-color: var(--locked-border);
+    transform: none;
+}
+.die.rolling { animation: roll .35s ease; }
+.die-face {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1;
+}
+.die-lock-icon {
+    font-size: .9rem;
+    position: absolute;
+    bottom: 4px;
+    right: 6px;
+    opacity: 0;
+    transition: opacity .2s;
+}
+.die.locked .die-lock-icon { opacity: 1; }
+
+@keyframes roll {
+    0%   { transform: rotate(0deg)   scale(1); }
+    25%  { transform: rotate(-12deg) scale(.9); }
+    50%  { transform: rotate(10deg)  scale(1.05); }
+    75%  { transform: rotate(-6deg)  scale(.95); }
+    100% { transform: rotate(0deg)   scale(1); }
+}
+
+.dice-hint {
+    font-size: .9rem;
+    color: var(--text-muted);
+    margin: .5rem 0 1rem;
+    min-height: 1.4em;
+}
+
+/* ── Buttons ─────────────────────────────────────────────────── */
+.buttons {
+    display: flex;
+    gap: .75rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: .5rem;
+}
+
+.btn {
+    padding: .65rem 1.4rem;
+    border: none;
+    border-radius: var(--radius);
+    font-size: .95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background .15s, transform .1s;
+}
+.btn:hover  { filter: brightness(1.08); transform: translateY(-1px); }
+.btn:active { transform: translateY(0); }
+.btn:disabled { opacity: .5; cursor: not-allowed; transform: none; filter: none; }
+
+.btn-primary   { background: var(--primary); color: #fff; }
+.btn-primary:hover { background: var(--primary-dk); }
+.btn-secondary { background: var(--secondary); color: #fff; }
+.btn-info      { background: var(--info); color: #fff; }
+
+/* ── Instructions ────────────────────────────────────────────── */
+.instructions ul {
+    list-style: none;
+    padding: 0;
+}
+.instructions li {
+    padding: .4rem 0;
+    font-size: .95rem;
+}
+
+/* ── Scorecard ────────────────────────────────────────────────── */
+.scorecard-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+}
+
+.scorecard {
+    border: 2px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+}
+
+.scorecard h4 {
+    background: var(--primary);
+    color: #fff;
+    text-align: center;
+    padding: .65rem;
+    font-size: 1rem;
+}
+
+.scorecard.active-player h4 { background: var(--success); }
+
+.score-group h5 {
+    background: var(--bg);
+    padding: .35rem .75rem;
+    font-size: .8rem;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border);
+    border-top: 1px solid var(--border);
+}
+
+.score-row {
+    display: grid;
+    grid-template-columns: 1fr 2fr auto;
+    align-items: center;
+    padding: .4rem .75rem;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    transition: background .15s;
+    font-size: .85rem;
+    gap: .5rem;
+}
+.score-row:hover { background: var(--highlight); }
+.score-row.used  { background: #f8fafc; cursor: default; }
+.score-row.used:hover { background: #f8fafc; }
+.score-row.available-hint { background: #f0fdf4; }
+
+.category-name { font-weight: 600; }
+.category-desc { color: var(--text-muted); font-size: .78rem; }
+.category-score {
+    font-weight: 700;
+    color: var(--primary);
+    min-width: 2.5rem;
+    text-align: right;
+}
+.category-score.scored { color: var(--success); }
+.category-score.zero   { color: var(--text-muted); }
+
+.bonus-row { background: #eff6ff; cursor: default !important; }
+.bonus-row:hover { background: #eff6ff !important; }
+
+.total-row {
+    display: flex;
+    justify-content: space-between;
+    padding: .65rem .75rem;
+    background: var(--primary);
+    color: #fff;
+    font-weight: 700;
+    font-size: 1rem;
+}
+
+/* ── Statistics ──────────────────────────────────────────────── */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.stat-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    text-align: center;
+    padding: 1.1rem .75rem;
+}
+.stat-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--primary);
+}
+.stat-label {
+    font-size: .78rem;
+    color: var(--text-muted);
+    margin-top: .25rem;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+}
+
+.probability-section, .analysis-section { margin-top: 1.25rem; }
+.probability-section h4, .analysis-section h4 {
+    font-size: 1rem;
+    color: var(--secondary);
+    margin-bottom: .75rem;
+}
+
+.probability-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: .88rem;
+}
+.probability-table th, .probability-table td {
+    border: 1px solid var(--border);
+    padding: .5rem .75rem;
+    text-align: left;
+}
+.probability-table th {
+    background: var(--primary);
+    color: #fff;
+    font-weight: 600;
+}
+.probability-table tr:nth-child(even) { background: var(--bg); }
+
+.analysis-section ul {
+    list-style: none;
+    padding: 0;
+}
+.analysis-section li {
+    padding: .3rem 0;
+    font-size: .9rem;
+    border-bottom: 1px dashed var(--border);
+}
+.analysis-section li:last-child { border-bottom: none; }
+
+/* ── Code section ────────────────────────────────────────────── */
+.code-section h4 {
+    font-size: .95rem;
+    color: var(--secondary);
+    margin-bottom: .5rem;
+}
+.code-section p {
+    font-size: .9rem;
+    color: var(--text-muted);
+    margin-bottom: .75rem;
+}
+pre {
+    background: #1e293b;
+    color: #e2e8f0;
+    border-radius: var(--radius);
+    padding: 1.25rem;
+    overflow-x: auto;
+    font-size: .83rem;
+    line-height: 1.65;
+}
+code { font-family: 'Cascadia Code', 'Fira Code', Consolas, monospace; }
+
+/* ── Modal ───────────────────────────────────────────────────── */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+.modal {
+    background: var(--surface);
+    border-radius: var(--radius);
+    padding: 2rem;
+    max-width: 480px;
+    width: 90%;
+    text-align: center;
+    box-shadow: 0 8px 32px rgba(0,0,0,.25);
+}
+.modal h2 { font-size: 1.8rem; margin-bottom: .75rem; }
+.modal p  { font-size: 1rem; color: var(--text-muted); margin-bottom: 1rem; }
+
+#finalScores {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin: 1rem 0;
+    font-size: 1.1rem;
+}
+#finalScores div { font-weight: 600; }
+
+/* ── Footer ──────────────────────────────────────────────────── */
+footer {
+    text-align: center;
+    padding: 1.5rem 1rem;
+    color: var(--text-muted);
+    font-size: .82rem;
+    border-top: 1px solid var(--border);
+}
+footer p + p { margin-top: .25rem; }
+
+/* ── Responsive ──────────────────────────────────────────────── */
+@media (max-width: 680px) {
+    .scorecard-container { grid-template-columns: 1fr; }
+    .die { width: 68px; height: 68px; }
+    .die-face { font-size: 1.7rem; }
+    header h1 { font-size: 1.6rem; }
+    .game-status { flex-direction: column; align-items: center; }
+}
