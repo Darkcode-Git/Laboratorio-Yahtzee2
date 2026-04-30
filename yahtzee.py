@@ -23,11 +23,11 @@ NUM_TURNS = 13
 
 UPPER_CATEGORIES = ["ones", "twos", "threes", "fours", "fives", "sixes"]
 LOWER_CATEGORIES = [
-    "threeOfKind",
-    "fourOfKind",
-    "fullHouse",
-    "smallStraight",
-    "largeStraight",
+    "three_of_kind",
+    "four_of_kind",
+    "full_house",
+    "small_straight",
+    "large_straight",
     "yahtzee",
     "chance",
 ]
@@ -43,11 +43,11 @@ CATEGORY_LABELS = {
     "fours": "Cuatros",
     "fives": "Cincos",
     "sixes": "Seises",
-    "threeOfKind": "Trío",
-    "fourOfKind": "Póker",
-    "fullHouse": "Full House",
-    "smallStraight": "Escalera Menor",
-    "largeStraight": "Escalera Mayor",
+    "three_of_kind": "Trío",
+    "four_of_kind": "Póker",
+    "full_house": "Full House",
+    "small_straight": "Escalera Menor",
+    "large_straight": "Escalera Mayor",
     "yahtzee": "Yahtzee",
     "chance": "Chance",
 }
@@ -84,16 +84,16 @@ def calculate_score(category: str, dice_values: List[int]) -> int:
         num = UPPER_CATEGORIES.index(category) + 1
         return counts.get(num, 0) * num
 
-    if category == "threeOfKind":
+    if category == "three_of_kind":
         return total if any(f >= 3 for f in frequencies) else 0
-    if category == "fourOfKind":
+    if category == "four_of_kind":
         return total if any(f >= 4 for f in frequencies) else 0
-    if category == "fullHouse":
+    if category == "full_house":
         return 25 if (3 in frequencies and 2 in frequencies) else 0
-    if category == "smallStraight":
+    if category == "small_straight":
         unique = sorted(set(dice_values))
         return 30 if has_sequence(unique, 4) else 0
-    if category == "largeStraight":
+    if category == "large_straight":
         unique = sorted(set(dice_values))
         return 40 if has_sequence(unique, 5) else 0
     if category == "yahtzee":
@@ -251,6 +251,8 @@ class YahtzeeGame:
 
     def auto_lock_strategy(self) -> None:
         # Estrategia simple: mantener dados iguales si hay frecuencia >= 2
+        if all(value == 0 for value in self.state.dice):
+            return
         counts: Dict[int, int] = {}
         for value in self.state.dice:
             counts[value] = counts.get(value, 0) + 1
