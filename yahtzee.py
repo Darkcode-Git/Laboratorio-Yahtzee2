@@ -251,12 +251,10 @@ class YahtzeeGame:
 
     def auto_lock_strategy(self) -> None:
         # Estrategia simple: mantener dados iguales si hay frecuencia >= 2
-        if all(value == 0 for value in self.state.dice):
-            return
         counts: Dict[int, int] = {}
         for value in self.state.dice:
             counts[value] = counts.get(value, 0) + 1
-        target = max(counts, key=lambda value: counts[value])
+        target = max(counts, key=lambda die_value: counts[die_value])
         for i, value in enumerate(self.state.dice):
             self.state.locked[i] = counts[value] >= 2 and value == target
 
