@@ -203,7 +203,10 @@ class YahtzeeGame:
         self.print_winner()
 
     def play_turn(self, player_index: int) -> None:
-        turn_num = min((self.state.stats.turns_completed // NUM_PLAYERS) + 1, NUM_TURNS)
+        player_turns = sum(
+            1 for cat in ALL_CATEGORIES if self.state.players[player_index].scores[cat] is not None
+        )
+        turn_num = min(player_turns + 1, NUM_TURNS)
         print(f"\n🎲 Turno de: Jugador {player_index + 1}  (Turno {turn_num}/{NUM_TURNS})")
 
         while self.state.rolls_left > 0:
@@ -251,8 +254,6 @@ class YahtzeeGame:
         counts: Dict[int, int] = {}
         for value in self.state.dice:
             counts[value] = counts.get(value, 0) + 1
-        if not counts:
-            return
         target = max(counts, key=lambda value: counts[value])
         for i, value in enumerate(self.state.dice):
             self.state.locked[i] = counts[value] >= 2 and value == target
