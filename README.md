@@ -8,11 +8,11 @@ Se agregó una versión en Python que simula el juego Yahtzee con 2 jugadores, r
 ### Cómo ejecutar
 
 ```bash
-python3 /home/runner/work/Laboratorio-Yahtzee2/Laboratorio-Yahtzee2/yahtzee.py
+python3 yahtzee.py
 ```
 
 Para una simulación automática:
 
 ```bash
-python3 /home/runner/work/Laboratorio-Yahtzee2/Laboratorio-Yahtzee2/yahtzee.py --auto
+python3 yahtzee.py --auto
 ```

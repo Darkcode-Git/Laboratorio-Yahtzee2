@@ -11,6 +11,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 import argparse
+import math
 import random
 from typing import Dict, List, Optional, Tuple
 
@@ -54,7 +55,7 @@ CATEGORY_LABELS = {
 
 def roll_single_die() -> int:
     """Genera un entero uniforme en [1, 6]."""
-    return int(random.random() * 6) + 1
+    return math.floor(random.random() * 6) + 1
 
 
 def has_sequence(sorted_unique: List[int], n: int) -> bool:
