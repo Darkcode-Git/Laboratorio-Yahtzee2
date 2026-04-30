@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laboratorio Yahtzee - Método de Montecarlo</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>🎲 Laboratorio Yahtzee</h1>
+        <h2>Simulación con Método de Montecarlo</h2>
+    </header>
+
+    <main>
+        <!-- Game Status -->
+        <section class="game-status">
+            <div class="status-card">
+                <span class="label">🎲 Turno de:</span>
+                <span id="currentPlayer" class="value">Jugador 1</span>
+            </div>
+            <div class="status-card">
+                <span class="label">Lanzamientos restantes:</span>
+                <span id="rollsLeft" class="value">3</span>
+            </div>
+            <div class="status-card">
+                <span class="label">Turno global:</span>
+                <span id="turnInfo" class="value">1 / 13</span>
+            </div>
+        </section>
+
+        <!-- Dice Area -->
+        <section class="dice-section">
+            <h3>Dados</h3>
+            <div class="dice-container" id="diceContainer">
+                <div class="die" id="die-0" onclick="toggleLock(0)">
+                    <div class="die-face" id="dieFace-0">?</div>
+                    <div class="die-lock-icon" id="lockIcon-0">🔒</div>
+                </div>
+                <div class="die" id="die-1" onclick="toggleLock(1)">
+                    <div class="die-face" id="dieFace-1">?</div>
+                    <div class="die-lock-icon" id="lockIcon-1">🔒</div>
+                </div>
+                <div class="die" id="die-2" onclick="toggleLock(2)">
+                    <div class="die-face" id="dieFace-2">?</div>
+                    <div class="die-lock-icon" id="lockIcon-2">🔒</div>
+                </div>
+                <div class="die" id="die-3" onclick="toggleLock(3)">
+                    <div class="die-face" id="dieFace-3">?</div>
+                    <div class="die-lock-icon" id="lockIcon-3">🔒</div>
+                </div>
+                <div class="die" id="die-4" onclick="toggleLock(4)">
+                    <div class="die-face" id="dieFace-4">?</div>
+                    <div class="die-lock-icon" id="lockIcon-4">🔒</div>
+                </div>
+            </div>
+            <div class="dice-hint" id="diceHint">
+                🎲 Haz clic en "Lanzar Dados" para comenzar tu turno
+            </div>
+            <div class="buttons">
+                <button id="rollBtn" class="btn btn-primary" onclick="rollDice()">🎲 Lanzar Dados</button>
+                <button class="btn btn-secondary" onclick="newGame()">🔄 Nuevo Juego</button>
+                <button class="btn btn-info" onclick="toggleInstructions()">📋 Instrucciones</button>
+            </div>
+        </section>
+
+        <!-- Instructions (collapsible) -->
+        <section class="instructions" id="instructionsPanel" style="display:none;">
+            <h3>📋 Instrucciones</h3>
+            <ul>
+                <li>🎲 Haz clic en "Lanzar Dados" para comenzar tu turno</li>
+                <li>🔒 Haz clic en un dado para bloquearlo/desbloquearlo</li>
+                <li>📊 Después de lanzar, selecciona una categoría de puntuación</li>
+                <li>✅ Tienes máximo 3 lanzamientos por turno</li>
+                <li>🏆 El jugador con más puntos al final gana</li>
+            </ul>
+        </section>
+
+        <!-- Scorecard -->
+        <section class="scorecard-section">
+            <h3>📊 Marcador</h3>
+            <div class="scorecard-container">
+                <!-- Player 1 Scorecard -->
+                <div class="scorecard" id="scorecard-0">
+                    <h4>👤 Jugador 1</h4>
+                    <div class="score-group">
+                        <h5>Sección Superior</h5>
+                        <div class="score-row" id="score-0-ones" onclick="selectCategory(0, 'ones')">
+                            <span class="category-name">Unos</span>
+                            <span class="category-desc">Suma de 1s</span>
+                            <span class="category-score" id="scoreVal-0-ones">-</span>
+                        </div>
+                        <div class="score-row" id="score-0-twos" onclick="selectCategory(0, 'twos')">
+                            <span class="category-name">Doses</span>
+                            <span class="category-desc">Suma de 2s</span>
+                            <span class="category-score" id="scoreVal-0-twos">-</span>
+                        </div>
+                        <div class="score-row" id="score-0-threes" onclick="selectCategory(0, 'threes')">
+                            <span class="category-name">Treses</span>
+                            <span class="category-desc">Suma de 3s</span>
+                            <span class="category-score" id="scoreVal-0-threes">-</span>
+                        </div>
+                        <div class="score-row" id="score-0-fours" onclick="selectCategory(0, 'fours')">
+                            <span class="category-name">Cuatros</span>
+                            <span class="category-desc">Suma de 4s</span>
+                            <span class="category-score" id="scoreVal-0-fours">-</span>
+                        </div>
+                        <div class="score-row" id="score-0-fives" onclick="selectCategory(0, 'fives')">
+                            <span class="category-name">Cincos</span>
+                            <span class="category-desc">Suma de 5s</span>
+                            <span class="category-score" id="scoreVal-0-fives">-</span>
+                        </div>
+                        <div class="score-row" id="score-0-sixes" onclick="selectCategory(0, 'sixes')">
+                            <span class="category-name">Seises</span>
+                            <span class="category-desc">Suma de 6s</span>
+                            <span class="category-score" id="scoreVal-0-sixes">-</span>
+                        </div>
+                        <div class="score-row bonus-row" id="bonus-0">
+                            <span class="category-name">Bonus (+35)</span>
+                            <span class="category-desc">Si superior ≥ 63</span>
+                            <span class="category-score" id="bonusVal-0">-</span>
+                        </div>
+                    </div>
+                    <div class="score-group">
+                        <h5>Sección Inferior</h5>
+                        <div class="score-row" id="score-0-threeOfKind" onclick="selectCategory(0, 'threeOfKind')">
+                            <span class="category-name">Trío</span>
+                            <span class="category-desc">3 iguales → suma todos</span>
+                            <span class="category-score" id="scoreVal-0-threeOfKind">-</span>
+                        </div>
+                        <div class="score-row" id="score-0-fourOfKind" onclick="selectCategory(0, 'fourOfKind')">
+                            <span class="category-name">Póker</span>
+                            <span class="category-desc">4 iguales → suma todos</span>
+                            <span class="category-score" id="scoreVal-0-fourOfKind">-</span>
+                        </div>
+                        <div class="score-row" id="score-0-fullHouse" onclick="selectCategory(0, 'fullHouse')">
+                            <span class="category-name">Full House</span>
+                            <span class="category-desc">3+2 iguales → 25 pts</span>
+                            <span class="category-score" id="scoreVal-0-fullHouse">-</span>
+                        </div>
+                        <div class="score-row" id="score-0-smallStraight" onclick="selectCategory(0, 'smallStraight')">
+                            <span class="category-name">Escalera Menor</span>
+                            <span class="category-desc">4 consecutivos → 30 pts</span>
+                            <span class="category-score" id="scoreVal-0-smallStraight">-</span>
+                        </div>
+                        <div class="score-row" id="score-0-largeStraight" onclick="selectCategory(0, 'largeStraight')">
+                            <span class="category-name">Escalera Mayor</span>
+                            <span class="category-desc">5 consecutivos → 40 pts</span>
+                            <span class="category-score" id="scoreVal-0-largeStraight">-</span>
+                        </div>
+                        <div class="score-row" id="score-0-yahtzee" onclick="selectCategory(0, 'yahtzee')">
+                            <span class="category-name">Yahtzee</span>
+                            <span class="category-desc">5 iguales → 50 pts</span>
+                            <span class="category-score" id="scoreVal-0-yahtzee">-</span>
+                        </div>
+                        <div class="score-row" id="score-0-chance" onclick="selectCategory(0, 'chance')">
+                            <span class="category-name">Chance</span>
+                            <span class="category-desc">Suma de todos</span>
+                            <span class="category-score" id="scoreVal-0-chance">-</span>
+                        </div>
+                    </div>
+                    <div class="total-row">
+                        <span>TOTAL</span>
+                        <span id="total-0">0</span>
+                    </div>
+                </div>
+
+                <!-- Player 2 Scorecard -->
+                <div class="scorecard" id="scorecard-1">
+                    <h4>👤 Jugador 2</h4>
+                    <div class="score-group">
+                        <h5>Sección Superior</h5>
+                        <div class="score-row" id="score-1-ones" onclick="selectCategory(1, 'ones')">
+                            <span class="category-name">Unos</span>
+                            <span class="category-desc">Suma de 1s</span>
+                            <span class="category-score" id="scoreVal-1-ones">-</span>
+                        </div>
+                        <div class="score-row" id="score-1-twos" onclick="selectCategory(1, 'twos')">
+                            <span class="category-name">Doses</span>
+                            <span class="category-desc">Suma de 2s</span>
+                            <span class="category-score" id="scoreVal-1-twos">-</span>
+                        </div>
+                        <div class="score-row" id="score-1-threes" onclick="selectCategory(1, 'threes')">
+                            <span class="category-name">Treses</span>
+                            <span class="category-desc">Suma de 3s</span>
+                            <span class="category-score" id="scoreVal-1-threes">-</span>
+                        </div>
+                        <div class="score-row" id="score-1-fours" onclick="selectCategory(1, 'fours')">
+                            <span class="category-name">Cuatros</span>
+                            <span class="category-desc">Suma de 4s</span>
+                            <span class="category-score" id="scoreVal-1-fours">-</span>
+                        </div>
+                        <div class="score-row" id="score-1-fives" onclick="selectCategory(1, 'fives')">
+                            <span class="category-name">Cincos</span>
+                            <span class="category-desc">Suma de 5s</span>
+                            <span class="category-score" id="scoreVal-1-fives">-</span>
+                        </div>
+                        <div class="score-row" id="score-1-sixes" onclick="selectCategory(1, 'sixes')">
+                            <span class="category-name">Seises</span>
+                            <span class="category-desc">Suma de 6s</span>
+                            <span class="category-score" id="scoreVal-1-sixes">-</span>
+                        </div>
+                        <div class="score-row bonus-row" id="bonus-1">
+                            <span class="category-name">Bonus (+35)</span>
+                            <span class="category-desc">Si superior ≥ 63</span>
+                            <span class="category-score" id="bonusVal-1">-</span>
+                        </div>
+                    </div>
+                    <div class="score-group">
+                        <h5>Sección Inferior</h5>
+                        <div class="score-row" id="score-1-threeOfKind" onclick="selectCategory(1, 'threeOfKind')">
+                            <span class="category-name">Trío</span>
+                            <span class="category-desc">3 iguales → suma todos</span>
+                            <span class="category-score" id="scoreVal-1-threeOfKind">-</span>
+                        </div>
+                        <div class="score-row" id="score-1-fourOfKind" onclick="selectCategory(1, 'fourOfKind')">
+                            <span class="category-name">Póker</span>
+                            <span class="category-desc">4 iguales → suma todos</span>
+                            <span class="category-score" id="scoreVal-1-fourOfKind">-</span>
+                        </div>
+                        <div class="score-row" id="score-1-fullHouse" onclick="selectCategory(1, 'fullHouse')">
+                            <span class="category-name">Full House</span>
+                            <span class="category-desc">3+2 iguales → 25 pts</span>
+                            <span class="category-score" id="scoreVal-1-fullHouse">-</span>
+                        </div>
+                        <div class="score-row" id="score-1-smallStraight" onclick="selectCategory(1, 'smallStraight')">
+                            <span class="category-name">Escalera Menor</span>
+                            <span class="category-desc">4 consecutivos → 30 pts</span>
+                            <span class="category-score" id="scoreVal-1-smallStraight">-</span>
+                        </div>
+                        <div class="score-row" id="score-1-largeStraight" onclick="selectCategory(1, 'largeStraight')">
+                            <span class="category-name">Escalera Mayor</span>
+                            <span class="category-desc">5 consecutivos → 40 pts</span>
+                            <span class="category-score" id="scoreVal-1-largeStraight">-</span>
+                        </div>
+                        <div class="score-row" id="score-1-yahtzee" onclick="selectCategory(1, 'yahtzee')">
+                            <span class="category-name">Yahtzee</span>
+                            <span class="category-desc">5 iguales → 50 pts</span>
+                            <span class="category-score" id="scoreVal-1-yahtzee">-</span>
+                        </div>
+                        <div class="score-row" id="score-1-chance" onclick="selectCategory(1, 'chance')">
+                            <span class="category-name">Chance</span>
+                            <span class="category-desc">Suma de todos</span>
+                            <span class="category-score" id="scoreVal-1-chance">-</span>
+                        </div>
+                    </div>
+                    <div class="total-row">
+                        <span>TOTAL</span>
+                        <span id="total-1">0</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Statistics -->
+        <section class="stats-section">
+            <h3>📊 Resultados y Análisis</h3>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="statTotalRolls">0</div>
+                    <div class="stat-label">Total de Lanzamientos</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="statTurnsCompleted">0</div>
+                    <div class="stat-label">Turnos Completados</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="statYahtzees">0</div>
+                    <div class="stat-label">Yahtzees Obtenidos</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="statAvgRoll">3.5</div>
+                    <div class="stat-label">Promedio por Lanzamiento</div>
+                </div>
+            </div>
+
+            <div class="probability-section">
+                <h4>📈 Probabilidades de Combinaciones</h4>
+                <table class="probability-table">
+                    <thead>
+                        <tr>
+                            <th>Combinación</th>
+                            <th>Probabilidad</th>
+                            <th>Explicación</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Yahtzee (5 iguales)</td>
+                            <td>0.077% (1/1296)</td>
+                            <td>6 × (1/6)⁵ en un lanzamiento</td>
+                        </tr>
+                        <tr>
+                            <td>Póker (4 iguales)</td>
+                            <td>1.93%</td>
+                            <td>Más probable con relanzamientos</td>
+                        </tr>
+                        <tr>
+                            <td>Full House</td>
+                            <td>3.86%</td>
+                            <td>3 de un tipo + 2 de otro</td>
+                        </tr>
+                        <tr>
+                            <td>Escalera Mayor</td>
+                            <td>3.09%</td>
+                            <td>1-2-3-4-5 o 2-3-4-5-6</td>
+                        </tr>
+                        <tr>
+                            <td>Escalera Menor</td>
+                            <td>12.35%</td>
+                            <td>4 consecutivos</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="analysis-section">
+                <h4>🔢 Análisis Probabilístico</h4>
+                <ul>
+                    <li><strong>Distribución Uniforme:</strong> Cada cara del dado tiene probabilidad P(X=k) = 1/6 ≈ 16.67%</li>
+                    <li><strong>Valor Esperado:</strong> E[X] = (1+2+3+4+5+6)/6 = 3.5</li>
+                    <li><strong>Varianza:</strong> Var(X) = 2.917</li>
+                    <li><strong>Desviación Estándar:</strong> σ = 1.708</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Code Section -->
+        <section class="code-section">
+            <h3>💻 Implementación del Algoritmo</h3>
+            <h4>Código Principal - Generación de Números Aleatorios</h4>
+            <p>El núcleo del método de Montecarlo en este juego es la generación de números aleatorios con distribución uniforme.</p>
+            <pre><code>// Función principal: Lanzar un dado con distribución uniforme
+function rollSingleDie() {
+    // Genera número aleatorio en [0,1) con distribución uniforme
+    const random = Math.random();
+
+    // Transforma a entero en [1,6]
+    // P(X=k) = 1/6 para k ∈ {1,2,3,4,5,6}
+    return Math.floor(random * 6) + 1;
+}
+
+// Lanzar múltiples dados (simulación Montecarlo)
+function rollDice() {
+    if (gameState.rollsLeft === 0) return;
+
+    // Lanzar solo dados no bloqueados
+    gameState.dice.forEach((die, index) => {
+        if (!die.locked) {
+            // Aplicar método de Montecarlo
+            die.value = rollSingleDie();
+            gameState.totalRolls++;
+        }
+    });
+
+    gameState.rollsLeft--;
+    updateDisplay();
+}</code></pre>
+        </section>
+    </main>
+
+    <!-- Winner Modal -->
+    <div class="modal-overlay" id="winnerModal" style="display:none;">
+        <div class="modal">
+            <h2 id="winnerTitle">🏆 ¡Fin del Juego!</h2>
+            <p id="winnerMessage"></p>
+            <div id="finalScores"></div>
+            <button class="btn btn-primary" onclick="newGame()">🔄 Jugar de Nuevo</button>
+        </div>
+    </div>
+
+    <footer>
+        <p>Laboratorio Yahtzee — Método de Montecarlo | Simulación Estocástica</p>
+        <p>Distribución Uniforme Discreta: P(X=k) = 1/6 para k ∈ {1,2,3,4,5,6}</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
