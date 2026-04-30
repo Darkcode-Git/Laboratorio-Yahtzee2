@@ -253,7 +253,7 @@ class YahtzeeGame:
             counts[value] = counts.get(value, 0) + 1
         if not counts:
             return
-        target = max(counts, key=counts.get)
+        target = max(counts, key=lambda value: counts[value])
         for i, value in enumerate(self.state.dice):
             self.state.locked[i] = counts[value] >= 2 and value == target
 
