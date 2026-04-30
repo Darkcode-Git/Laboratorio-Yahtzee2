@@ -232,14 +232,15 @@ function selectCategory(playerIndex, category) {
 }
 
 /**
- * Award upper-section bonus when the threshold is reached.
+ * Award upper-section bonus once all upper categories are scored.
+ * The bonus is only evaluated after all six upper categories are filled.
  */
 function checkUpperBonus(playerIndex) {
     const card = gameState.scores[playerIndex];
-    const upperSum = UPPER_CATEGORIES.reduce((acc, c) => acc + (card[c] || 0), 0);
     const allUpperScored = UPPER_CATEGORIES.every(c => card[c] !== null);
 
-    if (allUpperScored || upperSum >= UPPER_BONUS_THRESHOLD) {
+    if (allUpperScored) {
+        const upperSum = UPPER_CATEGORIES.reduce((acc, c) => acc + (card[c] || 0), 0);
         card.bonus = upperSum >= UPPER_BONUS_THRESHOLD ? UPPER_BONUS_VALUE : 0;
     }
 }
@@ -421,7 +422,7 @@ function updateScorecard() {
             ) {
                 // Show preview
                 const preview = calculateScore(cat, diceValues);
-                scoreEl.textContent = preview + ' pts';
+                scoreEl.textContent = preview;
                 scoreEl.className   = 'category-score';
                 rowEl.classList.add('available-hint');
                 rowEl.classList.remove('used');
